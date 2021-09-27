@@ -104,7 +104,7 @@ class TokenAuthentication(BaseAuthentication):
                     token_expired.send(sender=self.__class__,
                                        username=username, source="other_token")
         if auth_token.expiry is not None:
-            if auth_token.expiry < timezone.now():
+            if auth_token.expiry.astimezone(timezone.get_current_timezone()) < timezone.localtime(timezone.now()):
                 username = auth_token.user.get_username()
                 auth_token.delete()
                 token_expired.send(sender=self.__class__,
