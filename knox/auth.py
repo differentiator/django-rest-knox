@@ -98,7 +98,7 @@ class TokenAuthentication(BaseAuthentication):
     def _cleanup_token(self, auth_token):
         for other_token in auth_token.user.auth_token_set.all():
             if other_token.digest != auth_token.digest and other_token.expiry:
-                if other_token.expiry < timezone.now():
+                if other_token.expiry.astimezone(timezone.get_current_timezone()) < timezone.localtime(timezone.now()):
                     other_token.delete()
                     username = other_token.user.get_username()
                     token_expired.send(sender=self.__class__,
